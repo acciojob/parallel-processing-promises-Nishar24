@@ -1,40 +1,38 @@
 //your JS code here. If required.
-const imgUrls = [
-  'https://via.placeholder.com/150',
-  'https://via.placeholder.com/200',
-  'https://via.placeholder.com/250',
+// Array of image URLs
+// Array of image URLs
+const imageUrls = [
+    { url: 'https://example.com/image1.jpg' },
+    { url: 'https://example.com/image2.jpg' },
+    { url: 'https://example.com/image3.jpg' }
 ];
 
-const downloadImagesButton = document.getElementById('download-images-button');
-const outputDiv = document.getElementById('output');
-
-function downloadImages(urls) {
-  const imagePromises = urls.map((url) => {
+// Function to load an image
+function loadImage(image) {
     return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.src = url;
-
-      img.onload = () => {
-        resolve(img);
-      };
-
-      img.onerror = () => {
-        reject(`Failed to load image's URL: ${url}`);
-      };
+        const img = new Image();
+        img.src = image.url;
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error(`Failed to load image's URL: ${image.url}`));
     });
-  });
-
-  return Promise.all(imagePromises);
 }
 
-downloadImagesButton.addEventListener('click', async () => {
-  try {
-    const images = await downloadImages(imgUrls);
-    images.forEach(img => {
-      outputDiv.appendChild(img);
-    });
-  } catch (error) {
-    console.error(error);
-    outputDiv.textContent = error;
-  }
+// Event listener for button click
+document.getElementById('download-images-button').addEventListener('click', () => {
+    const outputDiv = document.getElementById('output');
+    outputDiv.innerHTML = ''; // Clear any previous content
+
+    const imagePromises = imageUrls.map(loadImage);
+
+    Promise.all(imagePromises)
+        .then(images => {
+            images.forEach(img => {
+                outputDiv.appendChild(img);
+            });
+        })
+        .catch(error => {
+            const errorMessage = document.createElement('p');
+            errorMessage.textContent = error.message;
+            outputDiv.appendChild(errorMessage);
+        });
 });
