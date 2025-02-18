@@ -1,44 +1,57 @@
 //your JS code here. If required.
 // Array of image URLs
-const imgUrls = [
-  'https://via.placeholder.com/150',
-  'https://via.placeholder.com/200',
-  'https://via.placeholder.com/250',
+const imageUrls = [
+  "https://via.placeholder.com/150",
+  "https://via.placeholder.com/200",
+  "https://via.placeholder.com/250",
+  "https://invalid-url.com/image.png", // Invalid URL for testing error handling
 ];
 
-const downloadImagesButton = document.getElementById('download-images-button');
-const outputDiv = document.getElementById('output');
+// Function to download an image
+function downloadImage(url) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.src = url;
 
-function downloadImages(urls) {
-  const imagePromises = urls.map((url) => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.src = url;
+    img.onload = () => {
+      resolve(img);
+    };
 
-      img.onload = () => {
-        resolve(img);
-      };
-
-      img.onerror = () => {
-        reject(`Failed to load image's URL: ${url}`);
-      };
-    });
+    img.onerror = () => {
+      reject(`Failed to load image: ${url}`);
+    };
   });
-
-  return Promise.all(imagePromises);
 }
 
-downloadImagesButton.addEventListener('click', async () => {
+// Function to download all images
+async function downloadImages() {
+  const loadingDiv = document.getElementById("loading");
+  const errorDiv = document.getElementById("error");
+  const outputDiv = document.getElementById("output");
+
+  // Show loading spinner
+  loadingDiv.style.display = "block";
+  errorDiv.style.display = "none";
+  outputDiv.innerHTML = "";
+
   try {
-    const images = await downloadImages(imgUrls);
-    images.forEach(img => {
-      const imgContainer = document.createElement('div');
-      imgContainer.classList.add('image-container'); 
-      imgContainer.appendChild(img); 
-      outputDiv.appendChild(imgContainer); 
+    // Download all images in parallel
+    const images = await Promise.all(imageUrls.map(downloadImage));
+
+    // Hide loading spinner
+    loadingDiv.style.display = "none";
+
+    // Display images in the output div
+    images.forEach((img) => {
+      outputDiv.appendChild(img);
     });
   } catch (error) {
-    console.error(error);
-    outputDiv.innerHTML = `<p class="error">Error: ${error}</p>`; 
+    // Hide loading spinner and show error message
+    loadingDiv.style.display = "none";
+    errorDiv.textContent = error;
+    errorDiv.style.display = "block";
   }
-});
+}
+
+// Start downloading images when the page loads
+downloadImages();

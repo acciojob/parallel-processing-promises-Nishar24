@@ -1,23 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Image Downloader</title>
   <style>
-    .image-container {
-      display: inline-block;
-      margin: 10px;
-      border: 1px solid #ccc;
-      padding: 5px;
+    #loading {
+      display: none;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: blue;
     }
-    .error {
+    #error {
+      display: none;
+      font-size: 1.2em;
+      font-weight: bold;
       color: red;
+    }
+    #output {
+      margin-top: 20px;
+    }
+    img {
+      max-width: 100px;
+      margin: 10px;
     }
   </style>
 </head>
 <body>
-  <button id="download-images-button">Download Images</button>
+  <h1>Image Downloader</h1>
+  <div id="loading">Loading...</div>
+  <div id="error"></div>
   <div id="output"></div>
 
-  <script src="script.js"></script> 
+  <script src="script.js"></script>
 </body>
 </html>
